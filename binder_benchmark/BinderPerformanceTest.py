@@ -27,21 +27,42 @@ from vts.runners.host import const
 class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
     """A testcase for the Binder Performance Benchmarking."""
 
-    DELIMITER = "\033[m\033[0;33m"
-    SCREEN_COMMANDS = ["\x1b[0;32m", "\x1b[m\x1b[0;36m", "\x1b[m", "\x1b[m"]
     THRESHOLD = {
-        "BM_sendVec_binder/64": 150000,
-        "BM_sendVec_binder/128": 150000,
-        "BM_sendVec_binder/256": 150000,
-        "BM_sendVec_binder/512": 150000,
-        "BM_sendVec_binder/1024": 150000,
-        "BM_sendVec_binder/2k": 200000,
-        "BM_sendVec_binder/4k": 300000,
-        "BM_sendVec_binder/8k": 400000,
-        "BM_sendVec_binder/16k": 600000,
-        "BM_sendVec_binder/32k": 800000,
-        "BM_sendVec_binder/64k": 1000000,
+        32: {
+            "4": 150000,
+            "8": 150000,
+            "16": 150000,
+            "32": 150000,
+            "64": 150000,
+            "128": 150000,
+            "256": 150000,
+            "512": 150000,
+            "1024": 150000,
+            "2k": 200000,
+            "4k": 300000,
+            "8k": 400000,
+            "16k": 600000,
+            "32k": 800000,
+            "64k": 1000000,
+        },
+        64: {
+            "4": 150000,
+            "8": 150000,
+            "16": 150000,
+            "32": 150000,
+            "64": 150000,
+            "128": 150000,
+            "256": 150000,
+            "512": 150000,
+            "1024": 150000,
+            "2k": 200000,
+            "4k": 300000,
+            "8k": 400000,
+            "16k": 600000,
+            "32k": 800000,
+            "64k": 1000000,
         }
+    }
     LABEL_PREFIX = "BM_sendVec_binder/"
 
     def setUpClass(self):
@@ -66,9 +87,9 @@ class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
         logging.info("possible cpus: %s : %s" % (low, high))
 
         for cpu_no in range(int(low), int(high)):
-          self.dut.shell.one.Execute(
-            "echo %s > /sys/devices/system/cpu/cpu%s/"
-            "cpufreq/scaling_governor" % (mode, cpu_no))
+            self.dut.shell.one.Execute(
+                "echo %s > /sys/devices/system/cpu/cpu%s/"
+                "cpufreq/scaling_governor" % (mode, cpu_no))
 
     def DisableCpuScaling(self):
         """Disable CPU frequency scaling on the device."""
@@ -97,11 +118,11 @@ class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
         logging.info("Start to run the benchmark (%s bit mode)", bits)
         binary = "/data/local/tmp/%s/libbinder_benchmark%s" % (bits, bits)
 
-        results = self.dut.shell.one.Execute(
-            ["chmod 755 %s" % binary,
-             "LD_LIBRARY_PATH=/data/local/tmp/%s/hw:"
-             "/data/local/tmp/%s:"
-             "$LD_LIBRARY_PATH %s" % (bits, bits, binary)])
+        results = self.dut.shell.one.Execute([
+            "chmod 755 %s" % binary, "LD_LIBRARY_PATH=/data/local/tmp/%s/hw:"
+            "/data/local/tmp/%s:"
+            "$LD_LIBRARY_PATH %s" % (bits, bits, binary)
+        ])
 
         # Parses the result.
         asserts.assertEqual(len(results[const.STDOUT]), 2)
@@ -111,14 +132,8 @@ class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
         label_result = []
         value_result = []
         for line in stdout_lines:
-            if self.DELIMITER in line:
-                tokens = []
-                for line_original in line.split(self.DELIMITER):
-                    line_original = line_original.strip()
-                    for command in self.SCREEN_COMMANDS:
-                        if command in line_original:
-                            line_original = line_original.replace(command, "")
-                    tokens.append(line_original)
+            if line.startswith(self.LABEL_PREFIX):
+                tokens = line.split()
                 benchmark_name = tokens[0]
                 time_in_ns = tokens[1].split()[0]
                 logging.info(benchmark_name)
@@ -132,17 +147,19 @@ class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
         # To upload to the web DB.
         self.AddProfilingDataLabeledVector(
             "binder_vector_roundtrip_latency_benchmark_%sbits" % bits,
-            label_result, value_result, x_axis_label="Message Size (Bytes)",
+            label_result,
+            value_result,
+            x_axis_label="Message Size (Bytes)",
             y_axis_label="Roundtrip Binder RPC Latency (nanoseconds)")
 
         # Assertions to check the performance requirements
         for label, value in zip(label_result, value_result):
-            if label in self.THRESHOLD:
+            if label in self.THRESHOLD[bits]:
                 asserts.assertLess(
-                    value,
-                    self.THRESHOLD[label],
+                    value, self.THRESHOLD[bits][label],
                     "%s ns for %s is longer than the threshold %s ns" % (
                         value, label, self.THRESHOLD[label]))
+
 
 if __name__ == "__main__":
     test_runner.main()

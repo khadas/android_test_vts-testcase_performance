@@ -27,37 +27,44 @@ from vts.runners.host import const
 class HwBinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
     """A test case for the HWBinder performance benchmarking."""
 
-    DELIMITER = "\033[m\033[0;33m"
-    SCREEN_COMMANDS = ["\x1b[0;32m", "\x1b[m\x1b[0;36m", "\x1b[m", "\x1b[m"]
     THRESHOLD = {
         32: {
-            "BM_sendVec/64": 100000,
-            "BM_sendVec/128": 100000,
-            "BM_sendVec/256": 100000,
-            "BM_sendVec/512": 100000,
-            "BM_sendVec/1024": 100000,
-            "BM_sendVec/2k": 100000,
-            "BM_sendVec/4k": 100000,
-            "BM_sendVec/8k": 110000,
-            "BM_sendVec/16k": 120000,
-            "BM_sendVec/32k": 140000,
-            "BM_sendVec/64k": 170000,
+            "4": 100000,
+            "8": 100000,
+            "16": 100000,
+            "32": 100000,
+            "64": 100000,
+            "128": 100000,
+            "256": 100000,
+            "512": 100000,
+            "1024": 100000,
+            "2k": 100000,
+            "4k": 100000,
+            "8k": 110000,
+            "16k": 120000,
+            "32k": 140000,
+            "64k": 170000,
         },
         64: {
-            "BM_sendVec/64": 100000,
-            "BM_sendVec/128": 100000,
-            "BM_sendVec/256": 100000,
-            "BM_sendVec/512": 100000,
-            "BM_sendVec/1024": 100000,
-            "BM_sendVec/2k": 100000,
-            "BM_sendVec/4k": 100000,
-            "BM_sendVec/8k": 110000,
-            "BM_sendVec/16k": 120000,
-            "BM_sendVec/32k": 150000,
-            "BM_sendVec/64k": 200000,
+            "4": 100000,
+            "8": 100000,
+            "16": 100000,
+            "32": 100000,
+            "64": 100000,
+            "128": 100000,
+            "256": 100000,
+            "512": 100000,
+            "1024": 100000,
+            "2k": 100000,
+            "4k": 100000,
+            "8k": 110000,
+            "16k": 120000,
+            "32k": 150000,
+            "64k": 200000,
         }
     }
-    LABEL_PREFIX = "BM_sendVec/"
+    LABEL_PREFIX_BINDERIZE = "BM_sendVec_binderize/"
+    LABEL_PREFIX_PASSTHROUGH = "BM_sendVec_passthrough/"
 
     def setUpClass(self):
         required_params = ["hidl_hal_mode"]
@@ -83,9 +90,9 @@ class HwBinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
         logging.info("possible cpus: %s : %s" % (low, high))
 
         for cpu_no in range(int(low), int(high)):
-          self.dut.shell.one.Execute(
-             "echo %s > /sys/devices/system/cpu/cpu%s/"
-             "cpufreq/scaling_governor" % (mode, cpu_no))
+            self.dut.shell.one.Execute(
+                "echo %s > /sys/devices/system/cpu/cpu%s/"
+                "cpufreq/scaling_governor" % (mode, cpu_no))
 
     def DisableCpuScaling(self):
         """Disable CPU frequency scaling on the device."""
@@ -111,15 +118,18 @@ class HwBinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
                   at the compile time (e.g., 32- vs. 64-bit library).
         """
         # Runs the benchmark.
-        logging.info("Start to run the benchmark with HIDL mode %s (%s bit mode)",
-                     self.hidl_hal_mode, bits)
+        logging.info(
+            "Start to run the benchmark with HIDL mode %s (%s bit mode)",
+            self.hidl_hal_mode, bits)
         binary = "/data/local/tmp/%s/libhwbinder_benchmark%s" % (bits, bits)
 
-        results = self.dut.shell.one.Execute(
-            ["chmod 755 %s" % binary,
-             "LD_LIBRARY_PATH=/data/local/tmp/%s/hw:"
-             "/data/local/tmp/%s:"
-             "$LD_LIBRARY_PATH %s -m %s" % (bits, bits, binary, self.hidl_hal_mode.encode("utf-8"))])
+        results = self.dut.shell.one.Execute([
+            "chmod 755 %s" % binary,
+            "LD_LIBRARY_PATH=/system/lib%s:/data/local/tmp/%s/hw:"
+            "/data/local/tmp/%s:"
+            "$LD_LIBRARY_PATH %s -m %s" %
+            (bits, bits, bits, binary, self.hidl_hal_mode.encode("utf-8"))
+        ])
 
         # Parses the result.
         asserts.assertEqual(len(results[const.STDOUT]), 2)
@@ -128,20 +138,17 @@ class HwBinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
         logging.info("stdout: %s", stdout_lines)
         label_result = []
         value_result = []
+        prefix = (self.LABEL_PREFIX_BINDERIZE
+                  if self.hidl_hal_mode == "BINDERIZE" else
+                  self.LABEL_PREFIX_PASSTHROUGH)
         for line in stdout_lines:
-            if self.DELIMITER in line:
-                tokens = []
-                for line_original in line.split(self.DELIMITER):
-                    line_original = line_original.strip()
-                    for command in self.SCREEN_COMMANDS:
-                        if command in line_original:
-                            line_original = line_original.replace(command, "")
-                    tokens.append(line_original)
+            if line.startswith(prefix):
+                tokens = line.split()
                 benchmark_name = tokens[0]
                 time_in_ns = tokens[1].split()[0]
                 logging.info(benchmark_name)
                 logging.info(time_in_ns)
-                label_result.append(benchmark_name.replace(self.LABEL_PREFIX, ""))
+                label_result.append(benchmark_name.replace(prefix, ""))
                 value_result.append(int(time_in_ns))
 
         logging.info("result label for %sbits: %s", bits, label_result)
@@ -149,17 +156,19 @@ class HwBinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
         # To upload to the web DB.
         self.AddProfilingDataLabeledVector(
             "hwbinder_vector_roundtrip_latency_benchmark_%sbits" % bits,
-            label_result, value_result, x_axis_label="Message Size (Bytes)",
+            label_result,
+            value_result,
+            x_axis_label="Message Size (Bytes)",
             y_axis_label="Roundtrip HwBinder RPC Latency (naonseconds)")
 
         # Assertions to check the performance requirements
         for label, value in zip(label_result, value_result):
             if label in self.THRESHOLD[bits]:
                 asserts.assertLess(
-                    value,
-                    self.THRESHOLD[bits][label],
+                    value, self.THRESHOLD[bits][label],
                     "%s ns for %s is longer than the threshold %s ns" % (
                         value, label, self.THRESHOLD[bits][label]))
+
 
 if __name__ == "__main__":
     test_runner.main()
