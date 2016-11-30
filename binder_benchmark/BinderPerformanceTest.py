@@ -158,7 +158,7 @@ class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
                 asserts.assertLess(
                     value, self.THRESHOLD[bits][label],
                     "%s ns for %s is longer than the threshold %s ns" % (
-                        value, label, self.THRESHOLD[label]))
+                        value, label, self.THRESHOLD[bits][label]))
 
 
 if __name__ == "__main__":
