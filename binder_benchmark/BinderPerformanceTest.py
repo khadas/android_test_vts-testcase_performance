@@ -126,6 +126,9 @@ class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
 
         # Parses the result.
         asserts.assertEqual(len(results[const.STDOUT]), 2)
+        asserts.assertFalse(
+            any(results[const.EXIT_CODE]),
+            "BinderPerformanceTest failed.")
         logging.info("stderr: %s", results[const.STDERR][1])
         stdout_lines = results[const.STDOUT][1].split("\n")
         logging.info("stdout: %s", stdout_lines)
