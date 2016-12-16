@@ -17,6 +17,7 @@
 
 import logging
 
+from vts.proto import VtsReportMessage_pb2 as ReportMsg
 from vts.runners.host import asserts
 from vts.runners.host import base_test_with_webdb
 from vts.runners.host import test_runner
@@ -111,7 +112,8 @@ class BinderThroughputBenchmark(base_test_with_webdb.BaseTestWithWebDbClass):
         self.AddProfilingDataLabeledVector(
             "binder_throughput_iterations_per_second_%sbits" % bits,
             labels, iterations_per_second, x_axis_label="Number of Threads",
-            y_axis_label="Binder RPC Iterations Per Second")
+            y_axis_label="Binder RPC Iterations Per Second",
+            regression_mode=ReportMsg.VTS_REGRESSION_MODE_DECREASING)
 
         self.AddProfilingDataLabeledVector(
             "binder_throughput_time_average_ns_%sbits" % bits,
