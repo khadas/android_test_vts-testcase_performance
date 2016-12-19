@@ -68,14 +68,10 @@ class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
     def setUpClass(self):
         self.dut = self.registerController(android_device)[0]
         self.dut.shell.InvokeTerminal("one")
-        self.dut.shell.one.Execute("stop")
-        self.dut.shell.one.Execute("setprop sys.boot_completed 0")
         self.DisableCpuScaling()
 
     def tearDownClass(self):
         self.EnableCpuScaling()
-        self.dut.shell.one.Execute("start")
-        self.waitForBootCompletion()
 
     def ChangeCpuGoverner(self, mode):
         """Changes the cpu governer mode of all the cpus on the device.
