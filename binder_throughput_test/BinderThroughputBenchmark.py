@@ -113,12 +113,13 @@ class BinderThroughputBenchmark(base_test_with_webdb.BaseTestWithWebDbClass):
             "binder_throughput_iterations_per_second_%sbits" % bits,
             labels, iterations_per_second, x_axis_label="Number of Threads",
             y_axis_label="Binder RPC Iterations Per Second",
-            regression_mode=ReportMsg.VTS_REGRESSION_MODE_DECREASING)
+            regression_mode=ReportMsg.VTS_REGRESSION_MODE_DISABLED)
 
         self.AddProfilingDataLabeledVector(
             "binder_throughput_time_average_ns_%sbits" % bits,
             labels, time_average, x_axis_label="Number of Threads",
-            y_axis_label="Binder RPC Time - Average (nanoseconds)")
+            y_axis_label="Binder RPC Time - Average (nanoseconds)",
+            regression_mode=ReportMsg.VTS_REGRESSION_MODE_DISABLED)
         self.AddProfilingDataLabeledVector(
             "binder_throughput_time_best_ns_%sbits" % bits,
             labels, time_best, x_axis_label="Number of Threads",
@@ -126,24 +127,29 @@ class BinderThroughputBenchmark(base_test_with_webdb.BaseTestWithWebDbClass):
         self.AddProfilingDataLabeledVector(
             "binder_throughput_time_worst_ns_%sbits" % bits,
             labels, time_worst, x_axis_label="Number of Threads",
-            y_axis_label="Binder RPC Time - Worst Case (nanoseconds)")
+            y_axis_label="Binder RPC Time - Worst Case (nanoseconds)",
+            regression_mode=ReportMsg.VTS_REGRESSION_MODE_DISABLED)
 
         self.AddProfilingDataLabeledVector(
             "binder_throughput_time_50percentile_ns_%sbits" % bits,
             labels, time_percentile_50, x_axis_label="Number of Threads",
-            y_axis_label="Binder RPC Time - 50 Percentile (nanoseconds)")
+            y_axis_label="Binder RPC Time - 50 Percentile (nanoseconds)",
+            regression_mode=ReportMsg.VTS_REGRESSION_MODE_DISABLED)
         self.AddProfilingDataLabeledVector(
             "binder_throughput_time_90percentile_ns_%sbits" % bits,
             labels, time_percentile_90, x_axis_label="Number of Threads",
-            y_axis_label="Binder RPC Time - 90 Percentile (nanoseconds)")
+            y_axis_label="Binder RPC Time - 90 Percentile (nanoseconds)",
+            regression_mode=ReportMsg.VTS_REGRESSION_MODE_DISABLED)
         self.AddProfilingDataLabeledVector(
             "binder_throughput_time_95percentile_ns_%sbits" % bits,
             labels, time_percentile_95, x_axis_label="Number of Threads",
-            y_axis_label="Binder RPC Time - 95 Percentile (nanoseconds)")
+            y_axis_label="Binder RPC Time - 95 Percentile (nanoseconds)",
+            regression_mode=ReportMsg.VTS_REGRESSION_MODE_DISABLED)
         self.AddProfilingDataLabeledVector(
             "binder_throughput_time_99percentile_ns_%sbits" % bits,
             labels, time_percentile_99, x_axis_label="Number of Threads",
-            y_axis_label="Binder RPC Time - 99 Percentile (nanoseconds)")
+            y_axis_label="Binder RPC Time - 99 Percentile (nanoseconds)",
+            regression_mode=ReportMsg.VTS_REGRESSION_MODE_DISABLED)
 
     def RunBenchmark(self, bits, threads):
         """Runs the native binary and parses its result.
