@@ -20,9 +20,10 @@ import logging
 from vts.proto import VtsReportMessage_pb2 as ReportMsg
 from vts.runners.host import asserts
 from vts.runners.host import base_test_with_webdb
+from vts.runners.host import const
 from vts.runners.host import test_runner
 from vts.utils.python.controllers import android_device
-from vts.runners.host import const
+from vts.utils.python.cpu import cpu_frequency_scaling
 
 # number of threads to use when running the throughput tests on target.
 _THREAD_LIST = [2, 3, 4, 5, 7, 10, 100]
@@ -42,37 +43,17 @@ class HwBinderThroughputBenchmark(base_test_with_webdb.BaseTestWithWebDbClass):
         self.getUserParams(required_params)
         self.dut = self.registerController(android_device)[0]
         self.dut.shell.InvokeTerminal("one")
-        self.DisableCpuScaling()
+        self._cpu_freq = cpu_frequency_scaling.CpuFrequencyScalingController(self.dut)
+        self._cpu_freq.DisableCpuScaling()
+
+    def setUpTest(self):
+        self._cpu_freq.SkipIfThermalThrottling(retry_delay_secs=30)
+
+    def tearDownTest(self):
+        self._cpu_freq.SkipIfThermalThrottling()
 
     def tearDownClass(self):
-        self.EnableCpuScaling()
-
-
-    def ChangeCpuGoverner(self, mode):
-        """Changes the cpu governer mode of all the cpus on the device.
-
-        Args:
-            mode:expected cpu governer mode. e.g performan/interactive.
-        """
-        results = self.dut.shell.one.Execute(
-            "cat /sys/devices/system/cpu/possible")
-        asserts.assertEqual(len(results[const.STDOUT]), 1)
-        stdout_lines = results[const.STDOUT][0].split("\n")
-        (low, high) = stdout_lines[0].split('-')
-        logging.info("possible cpus: %s : %s" % (low, high))
-
-        for cpu_no in range(int(low), int(high)):
-          self.dut.shell.one.Execute(
-             "echo %s > /sys/devices/system/cpu/cpu%s/"
-             "cpufreq/scaling_governor" % (mode, cpu_no))
-
-    def DisableCpuScaling(self):
-        """Disable CPU frequency scaling on the device."""
-        self.ChangeCpuGoverner("performance")
-
-    def EnableCpuScaling(self):
-        """Enable CPU frequency scaling on the device."""
-        self.ChangeCpuGoverner("interactive")
+        self._cpu_freq.EnableCpuScaling()
 
     def testRunBenchmark32Bit(self):
         """A test case which runs the 32-bit benchmark."""
