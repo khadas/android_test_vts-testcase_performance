@@ -19,13 +19,19 @@ import logging
 
 from vts.runners.host import asserts
 from vts.runners.host import base_test_with_webdb
+from vts.runners.host import const
 from vts.runners.host import test_runner
 from vts.utils.python.controllers import android_device
-from vts.runners.host import const
+from vts.utils.python.cpu import cpu_frequency_scaling
 
 
 class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
-    """A testcase for the Binder Performance Benchmarking."""
+    """A testcase for the Binder Performance Benchmarking.
+
+    Attributes:
+        dut: the target DUT (device under test) instance.
+        _cpu_freq: CpuFrequencyScalingController instance of self.dut.
+    """
 
     THRESHOLD = {
         32: {
@@ -68,36 +74,21 @@ class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
     def setUpClass(self):
         self.dut = self.registerController(android_device)[0]
         self.dut.shell.InvokeTerminal("one")
-        self.DisableCpuScaling()
+        self.dut.shell.one.Execute("stop")
+        self.dut.shell.one.Execute("setprop sys.boot_completed 0")
+        self._cpu_freq = cpu_frequency_scaling.CpuFrequencyScalingController(self.dut)
+        self._cpu_freq.DisableCpuScaling()
+
+    def setUpTest(self):
+        self._cpu_freq.SkipIfThermalThrottling(retry_delay_secs=30)
+
+    def tearDownTest(self):
+        self._cpu_freq.SkipIfThermalThrottling()
 
     def tearDownClass(self):
-        self.EnableCpuScaling()
-
-    def ChangeCpuGoverner(self, mode):
-        """Changes the cpu governer mode of all the cpus on the device.
-
-        Args:
-            mode: string, expected CPU governer mode, e.g., performance/interactive.
-        """
-        results = self.dut.shell.one.Execute(
-            "cat /sys/devices/system/cpu/possible")
-        asserts.assertEqual(len(results[const.STDOUT]), 1)
-        stdout_lines = results[const.STDOUT][0].split("\n")
-        (low, high) = stdout_lines[0].split('-')
-        logging.info("possible cpus: %s : %s" % (low, high))
-
-        for cpu_no in range(int(low), int(high)):
-            self.dut.shell.one.Execute(
-                "echo %s > /sys/devices/system/cpu/cpu%s/"
-                "cpufreq/scaling_governor" % (mode, cpu_no))
-
-    def DisableCpuScaling(self):
-        """Disable CPU frequency scaling on the device."""
-        self.ChangeCpuGoverner("performance")
-
-    def EnableCpuScaling(self):
-        """Enable CPU frequency scaling on the device."""
-        self.ChangeCpuGoverner("interactive")
+        self._cpu_freq.EnableCpuScaling()
+        self.dut.shell.one.Execute("start")
+        self.dut.waitForBootCompletion()
 
     def testRunBenchmark32Bit(self):
         """A testcase which runs the 32-bit benchmark."""
@@ -126,6 +117,9 @@ class BinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
 
         # Parses the result.
         asserts.assertEqual(len(results[const.STDOUT]), 2)
+        asserts.assertFalse(
+            any(results[const.EXIT_CODE]),
+            "BinderPerformanceTest failed.")
         logging.info("stderr: %s", results[const.STDERR][1])
         stdout_lines = results[const.STDOUT][1].split("\n")
         logging.info("stdout: %s", stdout_lines)
