@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016 The Android Open Source Project
+# Copyright (C) 2017 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,6 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := HwBinderPassthroughThroughputTest
-VTS_CONFIG_SRC_DIR := testcases/performance/hwbinder_throughput_test/passthrough
+LOCAL_MODULE := HwBinderBinderizePerformanceAdbSystraceTest
+VTS_CONFIG_SRC_DIR := testcases/performance/hwbinder_benchmark_adb/binderize_systrace
 include test/vts/tools/build/Android.host_config.mk

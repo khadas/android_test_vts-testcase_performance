@@ -13,13 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 LOCAL_PATH := $(call my-dir)
 
 include $(call all-subdir-makefiles)
-
-include $(CLEAR_VARS)
-
-LOCAL_MODULE := BinderThroughputBenchmark
-VTS_CONFIG_SRC_DIR := testcases/performance/binder_throughput_test
-include test/vts/tools/build/Android.host_config.mk
