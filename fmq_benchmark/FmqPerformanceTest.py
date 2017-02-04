@@ -82,7 +82,7 @@ class FmqPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
         """
         # Start the benchmark service.
         logging.info("Start the benchmark service(%s bit mode)", bits)
-        binary = "/data/local/tmp/mq_benchmark_service"
+        binary = "/data/local/tmp/%s/mq_benchmark_service%s" % (bits, bits)
         results = self.dut.shell.one.Execute([
             "chmod 755 %s" % binary, "LD_LIBRARY_PATH=/data/local/tmp/%s:"
             "$LD_LIBRARY_PATH %s&" % (bits, binary)
