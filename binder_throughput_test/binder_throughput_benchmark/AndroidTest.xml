@@ -15,7 +15,7 @@
 -->
 <configuration description="Config for VTS BinderThroughputBenchmark test cases">
     <target_preparer class="com.android.compatibility.common.tradefed.targetprep.VtsFilePusher">
-        <option name="push-group" value="HidlHalTest.push" />
+        <option name="push-group" value="HostDrivenTest.push" />
         <option name="cleanup" value="true" />
         <option name="push" value="DATA/nativetest/binderThroughputTest/binderThroughputTest->/data/local/tmp/32/binderThroughputTest32" />
         <option name="push" value="DATA/nativetest64/binderThroughputTest/binderThroughputTest->/data/local/tmp/64/binderThroughputTest64" />
