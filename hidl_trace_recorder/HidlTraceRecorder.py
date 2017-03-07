@@ -19,20 +19,20 @@ import logging
 import os
 
 from vts.runners.host import asserts
-from vts.runners.host import base_test_with_webdb
+from vts.runners.host import base_test
 from vts.runners.host import const
 from vts.runners.host import test_runner
 from vts.utils.python.controllers import android_device
 
 
-class HidlTraceRecorder(base_test_with_webdb.BaseTestWithWebDbClass):
+class HidlTraceRecorder(base_test.BaseTestClass):
     """A HIDL HAL API trace recorder.
 
     This class uses an apk which is packaged as part of VTS. It uses to test the
     VTS TF's instrumentation preparer and post-processing modules. Those two
     Java TF-side modules are cherry-picked to CTS to collect HIDL traces while
     running various CTS test cases without having to package them as part of
-    VTS. 
+    VTS.
     """
 
     CTS_TESTS = [

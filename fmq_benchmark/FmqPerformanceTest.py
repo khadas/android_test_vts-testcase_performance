@@ -18,14 +18,14 @@
 import logging
 
 from vts.runners.host import asserts
-from vts.runners.host import base_test_with_webdb
+from vts.runners.host import base_test
 from vts.runners.host import const
 from vts.runners.host import test_runner
 from vts.utils.python.controllers import android_device
 from vts.utils.python.cpu import cpu_frequency_scaling
 
 
-class FmqPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
+class FmqPerformanceTest(base_test.BaseTestClass):
     """A testcase for the Fast Message Queue(fmq) Performance Benchmarking.
 
     Attributes:
@@ -126,14 +126,14 @@ class FmqPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
                 write_latency.append(int(value))
 
         # To upload to the web DB.
-        self.AddProfilingDataLabeledVector(
+        self.web.AddProfilingDataLabeledVector(
             "fmq_read_latency_benchmark_%sbits" % bits,
             read_label,
             read_latency,
             x_axis_label="Message Size (Bytes)",
             y_axis_label="Average Latency (nanoseconds)")
 
-        self.AddProfilingDataLabeledVector(
+        self.web.AddProfilingDataLabeledVector(
             "fmq_write_latency_benchmark_%sbits" % bits,
             write_label,
             write_latency,
