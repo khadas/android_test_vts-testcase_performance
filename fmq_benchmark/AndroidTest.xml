@@ -21,8 +21,8 @@
         <option name="push" value="DATA/bin/mq_benchmark_service64->/data/local/tmp/64/mq_benchmark_service64" />
         <option name="push" value="DATA/nativetest/mq_benchmark_client/mq_benchmark_client->/data/local/tmp/32/mq_benchmark_client32" />
         <option name="push" value="DATA/nativetest64/mq_benchmark_client/mq_benchmark_client->/data/local/tmp/64/mq_benchmark_client64" />
-        <option name="push" value="DATA/lib/android.hardware.benchmarks.msgq@1.0.so->/data/local/tmp/32/android.hardware.benchmarks.msgq@1.0.so" />
-        <option name="push" value="DATA/lib64/android.hardware.benchmarks.msgq@1.0.so->/data/local/tmp/64/android.hardware.benchmarks.msgq@1.0.so" />
+        <option name="push" value="DATA/lib/android.hardware.tests.msgq@1.0.so->/data/local/tmp/32/android.hardware.tests.msgq@1.0.so" />
+        <option name="push" value="DATA/lib64/android.hardware.tests.msgq@1.0.so->/data/local/tmp/64/android.hardware.tests.msgq@1.0.so" />
     </target_preparer>
     <target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer" />
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
