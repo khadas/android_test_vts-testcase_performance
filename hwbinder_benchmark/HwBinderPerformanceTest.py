@@ -18,14 +18,14 @@
 import logging
 
 from vts.runners.host import asserts
-from vts.runners.host import base_test_with_webdb
+from vts.runners.host import base_test
 from vts.runners.host import const
 from vts.runners.host import test_runner
 from vts.utils.python.controllers import android_device
 from vts.utils.python.cpu import cpu_frequency_scaling
 
 
-class HwBinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
+class HwBinderPerformanceTest(base_test.BaseTestClass):
     """A test case for the HWBinder performance benchmarking.
 
     Attributes:
@@ -148,7 +148,7 @@ class HwBinderPerformanceTest(base_test_with_webdb.BaseTestWithWebDbClass):
         logging.info("result label for %sbits: %s", bits, label_result)
         logging.info("result value for %sbits: %s", bits, value_result)
         # To upload to the web DB.
-        self.AddProfilingDataLabeledVector(
+        self.web.AddProfilingDataLabeledVector(
             "hwbinder_vector_roundtrip_latency_benchmark_%sbits" % bits,
             label_result,
             value_result,
