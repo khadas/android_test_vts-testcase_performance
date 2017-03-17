@@ -56,8 +56,6 @@ class FmqPerformanceTest(base_test.BaseTestClass):
 
     def tearDownClass(self):
         self._cpu_freq.EnableCpuScaling()
-        # Stop the benchmark service.
-        self.dut.shell.one.Execute("kill -9 `pidof mq_benchmark_service`")
 
     def setUpTest(self):
         self._cpu_freq.SkipIfThermalThrottling(retry_delay_secs=30)
@@ -99,6 +97,9 @@ class FmqPerformanceTest(base_test.BaseTestClass):
             "chmod 755 %s" % binary, "LD_LIBRARY_PATH=/data/local/tmp/%s:"
             "$LD_LIBRARY_PATH %s" % (bits, binary)
         ])
+
+        # Stop the benchmark service.
+        self.dut.shell.one.Execute("kill -9 `pidof mq_benchmark_service%s`" % bits)
 
         # Parses the result.
         asserts.assertEqual(len(results[const.STDOUT]), 2)
