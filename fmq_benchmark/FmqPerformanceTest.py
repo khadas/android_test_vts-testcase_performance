@@ -57,10 +57,10 @@ class FmqPerformanceTest(base_test.BaseTestClass):
     def tearDownClass(self):
         self._cpu_freq.EnableCpuScaling()
 
-    def setUpTest(self):
+    def setUp(self):
         self._cpu_freq.SkipIfThermalThrottling(retry_delay_secs=30)
 
-    def tearDownTest(self):
+    def tearDown(self):
         self._cpu_freq.SkipIfThermalThrottling()
 
     def testRunBenchmark32Bit(self):
