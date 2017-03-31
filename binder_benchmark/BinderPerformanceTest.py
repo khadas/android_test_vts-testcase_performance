@@ -78,10 +78,10 @@ class BinderPerformanceTest(base_test.BaseTestClass):
         self._cpu_freq = cpu_frequency_scaling.CpuFrequencyScalingController(self.dut)
         self._cpu_freq.DisableCpuScaling()
 
-    def setUpTest(self):
+    def setUp(self):
         self._cpu_freq.SkipIfThermalThrottling(retry_delay_secs=30)
 
-    def tearDownTest(self):
+    def tearDown(self):
         self._cpu_freq.SkipIfThermalThrottling()
 
     def tearDownClass(self):
