@@ -26,7 +26,7 @@ from vts.utils.python.controllers import android_device
 from vts.utils.python.cpu import cpu_frequency_scaling
 
 # number of threads to use when running the throughput tests on target.
-_THREAD_LIST = [2, 3, 4, 5, 7, 10, 100]
+_THREAD_LIST = [2, 3, 4, 5, 7, 10, 30, 50, 70, 100, 200]
 
 _ITERATIONS_PER_SECOND = "iterations_per_second"
 _TIME_AVERAGE = "time_average"
