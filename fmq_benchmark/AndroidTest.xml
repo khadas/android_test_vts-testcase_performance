@@ -21,8 +21,8 @@
         <option name="remount-system" value="true" />
         <option name="push" value="DATA/lib/android.hardware.tests.msgq@1.0.so->/data/local/tmp/32/android.hardware.tests.msgq@1.0.so" />
         <option name="push" value="DATA/lib64/android.hardware.tests.msgq@1.0.so->/data/local/tmp/64/android.hardware.tests.msgq@1.0.so" />
-        <option name="push" value="DATA/lib/hw/android.hardware.tests.msgq@1.0-impl.so->/vendor/lib/hw/android.hardware.tests.msgq@1.0-impl.so" />
-        <option name="push" value="DATA/lib64/hw/android.hardware.tests.msgq@1.0-impl.so->/vendor/lib64/hw/android.hardware.tests.msgq@1.0-impl.so" />
+        <option name="push" value="DATA/vendor/lib/hw/android.hardware.tests.msgq@1.0-impl.so->/vendor/lib/hw/android.hardware.tests.msgq@1.0-impl.so" />
+        <option name="push" value="DATA/vendor/lib64/hw/android.hardware.tests.msgq@1.0-impl.so->/vendor/lib64/hw/android.hardware.tests.msgq@1.0-impl.so" />
         <option name="push" value="DATA/nativetest/android.hardware.tests.msgq@1.0-service-benchmark/android.hardware.tests.msgq@1.0-service-benchmark->/data/local/tmp/32/mq_benchmark_service32" />
         <option name="push" value="DATA/nativetest64/android.hardware.tests.msgq@1.0-service-benchmark/android.hardware.tests.msgq@1.0-service-benchmark->/data/local/tmp/64/mq_benchmark_service64" />
         <option name="push" value="DATA/nativetest/mq_benchmark_client/mq_benchmark_client->/data/local/tmp/32/mq_benchmark_client32" />
