@@ -23,6 +23,8 @@ from vts.runners.host import const
 from vts.runners.host import test_runner
 from vts.utils.python.controllers import android_device
 from vts.utils.python.cpu import cpu_frequency_scaling
+from vts.utils.python.performance import benchmark_parser
+
 
 class BinderPerformanceTest(base_test.BaseTestClass):
     """A testcase for the Binder Performance Benchmarking.
@@ -68,7 +70,6 @@ class BinderPerformanceTest(base_test.BaseTestClass):
             "64k": 1000000,
         }
     }
-    LABEL_PREFIX = "BM_sendVec_binder/"
 
     def setUpClass(self):
         self.dut = self.registerController(android_device)[0]
@@ -110,33 +111,22 @@ class BinderPerformanceTest(base_test.BaseTestClass):
 
         results = self.dut.shell.one.Execute([
             "chmod 755 %s" % binary, "LD_LIBRARY_PATH=/data/local/tmp/%s/hw:"
-            "/data/local/tmp/%s:"
-            "$LD_LIBRARY_PATH %s" % (bits, bits, binary)
+            "/data/local/tmp/%s:$LD_LIBRARY_PATH "
+            "%s --benchmark_format=json" % (bits, bits, binary)
         ])
 
         # Parses the result.
         asserts.assertEqual(len(results[const.STDOUT]), 2)
+        logging.info("stderr: %s", results[const.STDERR][1])
+        logging.info("stdout: %s", results[const.STDOUT][1])
         asserts.assertFalse(
             any(results[const.EXIT_CODE]),
             "BinderPerformanceTest failed.")
-        logging.info("stderr: %s", results[const.STDERR][1])
-        stdout_lines = results[const.STDOUT][1].split("\n")
-        logging.info("stdout: %s", stdout_lines)
-        label_result = []
-        value_result = []
-        for line in stdout_lines:
-            if line.startswith(self.LABEL_PREFIX):
-                tokens = line.split()
-                benchmark_name = tokens[0]
-                time_in_ns = tokens[1].split()[0]
-                logging.info(benchmark_name)
-                logging.info(time_in_ns)
-                label_result.append(
-                    benchmark_name.replace(self.LABEL_PREFIX, ""))
-                value_result.append(int(time_in_ns))
+        parser = benchmark_parser.GoogleBenchmarkJsonParser(
+            results[const.STDOUT][1])
+        label_result = parser.getArguments()
+        value_result = parser.getRealTime()
 
-        logging.info("result label for %sbits: %s", bits, label_result)
-        logging.info("result value for %sbits: %s", bits, value_result)
         # To upload to the web DB.
         self.web.AddProfilingDataLabeledVector(
             "binder_vector_roundtrip_latency_benchmark_%sbits" % bits,
