@@ -23,6 +23,7 @@ from vts.runners.host import const
 from vts.runners.host import test_runner
 from vts.utils.python.controllers import android_device
 from vts.utils.python.cpu import cpu_frequency_scaling
+from vts.utils.python.performance import benchmark_parser
 
 
 class HwBinderPerformanceTest(base_test.BaseTestClass):
@@ -69,8 +70,6 @@ class HwBinderPerformanceTest(base_test.BaseTestClass):
             "64k": 200000,
         }
     }
-    LABEL_PREFIX_BINDERIZE = "BM_sendVec_binderize/"
-    LABEL_PREFIX_PASSTHROUGH = "BM_sendVec_passthrough/"
 
     def setUpClass(self):
         required_params = ["hidl_hal_mode"]
@@ -117,36 +116,23 @@ class HwBinderPerformanceTest(base_test.BaseTestClass):
         results = self.dut.shell.one.Execute([
             "chmod 755 %s" % binary,
             "LD_LIBRARY_PATH=/system/lib%s:/data/local/tmp/%s/hw:"
-            "/data/local/tmp/%s:"
-            "$LD_LIBRARY_PATH %s -m %s" %
+            "/data/local/tmp/%s:$LD_LIBRARY_PATH "
+            "%s -m %s --benchmark_format=json" %
             (bits, bits, bits, binary, self.hidl_hal_mode.encode("utf-8"))
         ])
 
         # Parses the result.
         asserts.assertEqual(len(results[const.STDOUT]), 2)
+        logging.info("stderr: %s", results[const.STDERR][1])
+        logging.info("stdout: %s", results[const.STDOUT][1])
         asserts.assertFalse(
             any(results[const.EXIT_CODE]),
             "HwBinderPerformanceTest failed.")
-        logging.info("stderr: %s", results[const.STDERR][1])
-        stdout_lines = results[const.STDOUT][1].split("\n")
-        logging.info("stdout: %s", stdout_lines)
-        label_result = []
-        value_result = []
-        prefix = (self.LABEL_PREFIX_BINDERIZE
-                  if self.hidl_hal_mode == "BINDERIZE" else
-                  self.LABEL_PREFIX_PASSTHROUGH)
-        for line in stdout_lines:
-            if line.startswith(prefix):
-                tokens = line.split()
-                benchmark_name = tokens[0]
-                time_in_ns = tokens[1].split()[0]
-                logging.info(benchmark_name)
-                logging.info(time_in_ns)
-                label_result.append(benchmark_name.replace(prefix, ""))
-                value_result.append(int(time_in_ns))
+        parser = benchmark_parser.GoogleBenchmarkJsonParser(
+            results[const.STDOUT][1])
+        label_result = parser.getArguments()
+        value_result = parser.getRealTime()
 
-        logging.info("result label for %sbits: %s", bits, label_result)
-        logging.info("result value for %sbits: %s", bits, value_result)
         # To upload to the web DB.
         self.web.AddProfilingDataLabeledVector(
             "hwbinder_vector_roundtrip_latency_benchmark_%sbits" % bits,
