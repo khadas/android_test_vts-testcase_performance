@@ -130,12 +130,14 @@ class HwBinderPerformanceTest(base_test.BaseTestClass):
             "HwBinderPerformanceTest failed.")
         parser = benchmark_parser.GoogleBenchmarkJsonParser(
             results[const.STDOUT][1])
-        label_result = parser.getArguments()
-        value_result = parser.getRealTime()
+        label_result = parser.GetArguments()
+        value_result = parser.GetRealTime()
+        table_name = "hwbinder_vector_roundtrip_latency_benchmark_%sbits" % bits
+        self.addTableToResult(table_name, parser.ToTable())
 
         # To upload to the web DB.
         self.web.AddProfilingDataLabeledVector(
-            "hwbinder_vector_roundtrip_latency_benchmark_%sbits" % bits,
+            table_name,
             label_result,
             value_result,
             x_axis_label="Message Size (Bytes)",
