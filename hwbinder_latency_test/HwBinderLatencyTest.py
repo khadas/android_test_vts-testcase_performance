@@ -27,7 +27,38 @@ from vts.utils.python.cpu import cpu_frequency_scaling
 
 
 class HwBinderLatencyTest(base_test.BaseTestClass):
-    """A test case for the hwbinder latency benchmarking."""
+    """A test case for the hwbinder latency benchmarking.
+
+    Sample output of libhwbinder_latency
+    {
+      "cfg":{"pair":6,"iterations":166,"deadline_us":2500,"passthrough":1},
+      "fifo_0_data": [15052, ...],
+      "fifo_1_data": [...],
+      ...
+      "ALL":{"SYNC":"GOOD","S":1992,"I":1992,"R":1,
+        "other_ms":{ "avg":0.0048, "wst":0.32, "bst":0.0022, "miss":0, "meetR":1},
+        "fifo_ms": { "avg":0.0035, "wst":0.037, "bst":0.0021, "miss":0, "meetR":1},
+        "otherdis":{ "p50":0.19531, "p90":0.19531, "p95":0.19531, "p99": 0.19531},
+        "fifodis": { "p50":0.19531, "p90":0.19531, "p95":0.19531, "p99": 0.19531}
+      },
+      "P0":{...
+      },
+      ...
+      "inheritance": "PASS"
+    }
+    """
+    # The order of the columns in the output table
+    _MS_COLUMNS = ["avg", "wst", "bst", "miss", "meetR"]
+    _DIS_COLUMNS = ["p50", "p90", "p95", "p99"]
+    # The keys in the JSON object
+    _CFG = "cfg"
+    _PAIR = "pair"
+    _ALL = "ALL"
+    _OTHER_MS = "other_ms"
+    _FIFO_MS = "fifo_ms"
+    _OTHERDIS = "otherdis"
+    _FIFODIS = "fifodis"
+    _INHERITANCE = "inheritance"
 
     def setUpClass(self):
         required_params = ["hidl_hal_mode"]
@@ -47,10 +78,14 @@ class HwBinderLatencyTest(base_test.BaseTestClass):
         self._cpu_freq.EnableCpuScaling()
 
     def testRunBenchmark32Bit(self):
-        self._uploadResult(self._runBenchmark(32), 32)
+        result = self._runBenchmark(32)
+        self._addBenchmarkTableToResult(result, 32)
+        self._uploadResult(result, 32)
 
     def testRunBenchmark64Bit(self):
-        self._uploadResult(self._runBenchmark(64), 64)
+        result = self._runBenchmark(64)
+        self._addBenchmarkTableToResult(result, 64)
+        self._uploadResult(result, 64)
 
     def _runBenchmark(self, bits):
         """Runs the native binary and parses its result.
@@ -82,9 +117,42 @@ class HwBinderLatencyTest(base_test.BaseTestClass):
             any(results[const.EXIT_CODE]),
             "testRunBenchmark%sBit failed." % (bits))
         json_result = json.loads(results[const.STDOUT][1]);
-        asserts.assertTrue(json_result["inheritance"] == "PASS",
+        asserts.assertTrue(json_result[self._INHERITANCE] == "PASS",
             "Scheduler does not support priority inheritance.");
         return json_result
+
+    def _createRow(self, pair_name, ms_result, dis_result):
+        """Creates a row from the JSON output.
+
+        Args:
+            pair_name: string, the pair name in the first column.
+            ms_result: dict, the fifo_ms or other_ms object.
+            dis_result: dict, the fifodis or otherdis object.
+
+        Returns:
+            the list containing pair_name and the values in the objects.
+        """
+        row = [pair_name]
+        row.extend([ms_result[x] for x in self._MS_COLUMNS])
+        row.extend([dis_result[x] for x in self._DIS_COLUMNS])
+        return row
+
+    def _addBenchmarkTableToResult(self, result, bits):
+        pair_cnt = result[self._CFG][self._PAIR]
+        row_names = ["P" + str(i) for i in range(pair_cnt)] + [self._ALL]
+        col_names = ["pair"] + self._MS_COLUMNS + self._DIS_COLUMNS
+        fifo_table = [col_names]
+        other_table = [col_names]
+        for row_name in row_names:
+            pair_result = result[row_name]
+            fifo_table.append(self._createRow(row_name,
+                pair_result[self._FIFO_MS], pair_result[self._FIFODIS]))
+            other_table.append(self._createRow(row_name,
+                pair_result[self._OTHER_MS], pair_result[self._OTHERDIS]))
+        self.addTableToResult(
+            "hwbinder_latency_%sbits_fifo" % bits,fifo_table)
+        self.addTableToResult(
+            "hwbinder_latency_%sbits_other" % bits, other_table)
 
     def _uploadResult(self, result, bits):
         """Uploads the output of benchmark program to web DB.
