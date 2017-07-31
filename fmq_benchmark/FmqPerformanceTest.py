@@ -94,7 +94,7 @@ class FmqPerformanceTest(base_test.BaseTestClass):
         binary = "/data/local/tmp/%s/mq_benchmark_client%s" % (bits, bits)
 
         results = self.dut.shell.one.Execute([
-            "chmod 755 %s" % binary, "LD_LIBRARY_PATH=/data/local/tmp/%s:"
+            "chmod 755 %s" % binary, "TREBLE_TESTING_OVERRIDE=true LD_LIBRARY_PATH=/data/local/tmp/%s:"
             "$LD_LIBRARY_PATH %s" % (bits, binary)
         ])
 
