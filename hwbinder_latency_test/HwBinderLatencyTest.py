@@ -104,6 +104,7 @@ class HwBinderLatencyTest(base_test.BaseTestClass):
         iterations = 1000 // (max_cpu - min_cpu)
         results = self.dut.shell.one.Execute([
             "chmod 755 %s" % binary,
+            "VTS_ROOT_PATH=/data/local/tmp " \
             "LD_LIBRARY_PATH=/system/lib%s:/data/local/tmp/%s/hw:"
             "/data/local/tmp/%s:$LD_LIBRARY_PATH "
             "%s -raw_data -pair %d -i %d -m %s" % (bits, bits, bits,
