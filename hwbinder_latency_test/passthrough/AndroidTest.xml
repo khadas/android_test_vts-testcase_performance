@@ -22,8 +22,8 @@
         <option name="push" value="DATA/lib64/android.hardware.tests.libhwbinder@1.0.so->/data/local/tmp/64/android.hardware.tests.libhwbinder@1.0.so" />
         <option name="push" value="DATA/nativetest/libhwbinder_latency/libhwbinder_latency->/data/local/tmp/32/libhwbinder_latency32" />
         <option name="push" value="DATA/nativetest64/libhwbinder_latency/libhwbinder_latency->/data/local/tmp/64/libhwbinder_latency64" />
-        <option name="push" value="DATA/vendor/lib/hw/android.hardware.tests.libhwbinder@1.0-impl.so->/vendor/lib/hw/android.hardware.tests.libhwbinder@1.0-impl.so" />
-        <option name="push" value="DATA/vendor/lib64/hw/android.hardware.tests.libhwbinder@1.0-impl.so->/vendor/lib64/hw/android.hardware.tests.libhwbinder@1.0-impl.so" />
+        <option name="push" value="DATA/lib/hw/android.hardware.tests.libhwbinder@1.0-impl.so->/data/local/tmp/system/lib/hw/android.hardware.tests.libhwbinder@1.0-impl.so" />
+        <option name="push" value="DATA/lib64/hw/android.hardware.tests.libhwbinder@1.0-impl.so->/data/local/tmp/system/lib64/hw/android.hardware.tests.libhwbinder@1.0-impl.so" />
     </target_preparer>
     <target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer">
     </target_preparer>
