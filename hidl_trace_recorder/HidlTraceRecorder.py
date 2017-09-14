@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 
+import datetime
 import logging
 import os
 
@@ -36,26 +37,70 @@ class HidlTraceRecorder(base_test.BaseTestClass):
     """
 
     CTS_TESTS = [
-        {"apk": "CtsAccelerationTestCases.apk",
-         "package": "android.acceleration.cts",
-         "runner": "android.support.test.runner.AndroidJUnitRunner"},
+        {
+            "name": "CtsAccelerationTestCases",
+            "package": "android.acceleration.cts",
+            "runner": "android.support.test.runner.AndroidJUnitRunner"
+        },
         # TODO(yim): reenable once tests in that apk are no more flaky.
-        # {"apk": "CtsSensorTestCases.apk",
-        #  "package": "android.hardware.sensor.cts",
-        #  "runner": "android.support.test.runner.AndroidJUnitRunner"},
-        ]
-    TMP_DIR = "/data/local/tmp"
+        #{"name": "CtsSensorTestCases",
+        # "package": "android.hardware.sensor.cts",
+        # "runner": "android.support.test.runner.AndroidJUnitRunner"},
+    ]
+
+    REMOTE_PROFILINT_TRACE_PATH = "/google/data/rw/teams/android-vts/cts-traces"
 
     def setUpClass(self):
         self.dut = self.registerController(android_device)[0]
+        self.dut.shell.InvokeTerminal("one")
+        self.dut.shell.one.Execute("setenforce 0")  # SELinux permissive mode
+        self.testcases = []
+        self.CreateTestCases()
 
-    def testRunCtsSensorTestCases(self):
-        """Runs all test cases in CtsSensorTestCases.apk."""
-        for cts_test in self.CTS_TESTS:
-          logging.info("Run %s", cts_test["apk"])
-          self.dut.adb.shell(
-              "am instrument -w -r %s/%s" % (cts_test["package"],
-                                             cts_test["runner"]))
+    def GetTestName(self, test_config):
+        '''Get test name form a test config.'''
+        return test_config["name"]
+
+    def CreateTestCases(self):
+        '''Create test configs.'''
+        for testcase in self.CTS_TESTS:
+            logging.info('Creating test case %s.', testcase["name"])
+            self.testcases.append(testcase)
+
+    def RunTestCase(self, test_case):
+        '''Runs a test_case.
+
+        Args:
+            test_case: a cts test config.
+        '''
+        # before running the cts test module enable profiling.
+        self.profiling.EnableVTSProfiling(
+            self.dut.shell.one, hal_instrumentation_lib_path="")
+        self.dut.stop()  # stop framework
+        self.dut.start()  # start framework
+
+        profiling_trace_path = os.path.join(
+            self.REMOTE_PROFILINT_TRACE_PATH,
+            datetime.datetime.now().strftime("%Y%m%d"),
+            self.GetTestName(test_case))
+        if not os.path.exists(profiling_trace_path):
+            os.makedirs(profiling_trace_path)
+
+        logging.info("Run %s", self.GetTestName(test_case))
+        self.dut.adb.shell("am instrument -w -r %s/%s" % (test_case["package"],
+                                                          test_case["runner"]))
+
+        # after running the cts test module, copy trace files and disable profiling.
+        self.profiling.GetTraceFiles(self.dut, profiling_trace_path)
+        self.profiling.DisableVTSProfiling(self.dut.shell.one)
+
+    def generateAllTests(self):
+        '''Runs all binary tests.'''
+        self.runGeneratedTests(
+            test_func=self.RunTestCase,
+            settings=self.testcases,
+            name_func=self.GetTestName)
+
 
 if __name__ == "__main__":
     test_runner.main()
