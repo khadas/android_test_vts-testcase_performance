@@ -32,5 +32,6 @@
         <option name="test-case-path" value="vts/testcases/performance/hwbinder_throughput_test/HwBinderThroughputBenchmark" />
         <option name="test-config-path" value="vts/testcases/performance/hwbinder_throughput_test/binderize/HwBinderBinderizeThroughputTest.config" />
         <option name="enable-systrace" value="true" />
+        <option name="test-timeout" value="5m"/>
     </test>
 </configuration>
