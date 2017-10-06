@@ -29,5 +29,6 @@
         <option name="test-module-name" value="HwBinderPassthroughLatencyTest" />
         <option name="test-case-path" value="vts/testcases/performance/hwbinder_latency_test/HwBinderLatencyTest" />
         <option name="test-config-path" value="vts/testcases/performance/hwbinder_latency_test/passthrough/HwBinderPassthroughLatencyTest.config" />
+        <option name="test-timeout" value="5m"/>
     </test>
 </configuration>

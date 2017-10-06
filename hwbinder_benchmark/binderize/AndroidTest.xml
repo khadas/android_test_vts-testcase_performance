@@ -29,5 +29,6 @@
         <option name="test-module-name" value="HwBinderBinderizePerformanceTest" />
         <option name="test-case-path" value="vts/testcases/performance/hwbinder_benchmark/HwBinderPerformanceTest" />
         <option name="test-config-path" value="vts/testcases/performance/hwbinder_benchmark/binderize/HwBinderBinderizePerformanceTest.config" />
+        <option name="test-timeout" value="5m"/>
     </test>
 </configuration>
