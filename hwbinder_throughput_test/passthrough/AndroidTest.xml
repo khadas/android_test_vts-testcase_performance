@@ -29,5 +29,6 @@
         <option name="test-module-name" value="HwBinderPassthroughThroughputTest" />
         <option name="test-case-path" value="vts/testcases/performance/hwbinder_throughput_test/HwBinderThroughputBenchmark" />
         <option name="test-config-path" value="vts/testcases/performance/hwbinder_throughput_test/passthrough/HwBinderPassthroughThroughputTest.config" />
+        <option name="test-timeout" value="5m"/>
     </test>
 </configuration>
