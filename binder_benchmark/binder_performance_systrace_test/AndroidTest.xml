@@ -23,8 +23,8 @@
         <option name="push" value="DATA/lib/android.hardware.tests.libbinder.so->/data/local/tmp/32/android.hardware.tests.libbinder.so" />
         <option name="push" value="DATA/lib64/android.hardware.tests.libbinder.so->/data/local/tmp/64/android.hardware.tests.libbinder.so" />
     </target_preparer>
-    <target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer">
-    </target_preparer>
+    <multi_target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer">
+    </multi_target_preparer>
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
         <option name="test-module-name" value="BinderPerformanceSystraceTest" />
         <option name="test-case-path" value="vts/testcases/performance/binder_benchmark/BinderPerformanceTest" />

@@ -21,8 +21,8 @@
         <option name="push" value="DATA/nativetest/binderThroughputTest/binderThroughputTest->/data/local/tmp/32/binderThroughputTest32" />
         <option name="push" value="DATA/nativetest64/binderThroughputTest/binderThroughputTest->/data/local/tmp/64/binderThroughputTest64" />
     </target_preparer>
-    <target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer">
-    </target_preparer>
+    <multi_target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer">
+    </multi_target_preparer>
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
         <option name="test-module-name" value="BinderThroughputBenchmarkSystrace" />
         <option name="test-case-path" value="vts/testcases/performance/binder_throughput_test/BinderThroughputBenchmark" />
