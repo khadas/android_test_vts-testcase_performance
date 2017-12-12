@@ -20,13 +20,11 @@ import logging
 import os
 
 from vts.runners.host import asserts
-from vts.runners.host import base_test
-from vts.runners.host import const
 from vts.runners.host import test_runner
-from vts.utils.python.controllers import android_device
+from vts.testcases.template.cts_test import cts_test
 
 
-class HidlTraceRecorder(base_test.BaseTestClass):
+class HidlTraceRecorder(cts_test.CtsTest):
     """A HIDL HAL API trace recorder.
 
     This class uses an apk which is packaged as part of VTS. It uses to test the
@@ -36,36 +34,7 @@ class HidlTraceRecorder(base_test.BaseTestClass):
     VTS.
     """
 
-    CTS_TESTS = [
-        {
-            "name": "CtsAccelerationTestCases",
-            "package": "android.acceleration.cts",
-            "runner": "android.support.test.runner.AndroidJUnitRunner"
-        },
-        # TODO(yim): reenable once tests in that apk are no more flaky.
-        #{"name": "CtsSensorTestCases",
-        # "package": "android.hardware.sensor.cts",
-        # "runner": "android.support.test.runner.AndroidJUnitRunner"},
-    ]
-
     REMOTE_PROFILINT_TRACE_PATH = "/google/data/rw/teams/android-vts/cts-traces"
-
-    def setUpClass(self):
-        self.dut = self.registerController(android_device)[0]
-        self.dut.shell.InvokeTerminal("one")
-        self.dut.shell.one.Execute("setenforce 0")  # SELinux permissive mode
-        self.testcases = []
-        self.CreateTestCases()
-
-    def GetTestName(self, test_config):
-        '''Get test name form a test config.'''
-        return test_config["name"]
-
-    def CreateTestCases(self):
-        '''Create test configs.'''
-        for testcase in self.CTS_TESTS:
-            logging.info('Creating test case %s.', testcase["name"])
-            self.testcases.append(testcase)
 
     def RunTestCase(self, test_case):
         '''Runs a test_case.
@@ -93,14 +62,6 @@ class HidlTraceRecorder(base_test.BaseTestClass):
         # after running the cts test module, copy trace files and disable profiling.
         self.profiling.GetTraceFiles(self.dut, profiling_trace_path)
         self.profiling.DisableVTSProfiling(self.dut.shell.one)
-
-    def generateAllTests(self):
-        '''Runs all binary tests.'''
-        self.runGeneratedTests(
-            test_func=self.RunTestCase,
-            settings=self.testcases,
-            name_func=self.GetTestName)
-
 
 if __name__ == "__main__":
     test_runner.main()
