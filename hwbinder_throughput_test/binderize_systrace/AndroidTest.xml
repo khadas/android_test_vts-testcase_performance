@@ -23,8 +23,8 @@
         <option name="push" value="DATA/lib/hw/android.hardware.tests.libhwbinder@1.0-impl.so->/data/local/tmp/system/lib/hw/android.hardware.tests.libhwbinder@1.0-impl.so" />
         <option name="push" value="DATA/lib64/hw/android.hardware.tests.libhwbinder@1.0-impl.so->/data/local/tmp/system/lib64/hw/android.hardware.tests.libhwbinder@1.0-impl.so" />
     </target_preparer>
-    <target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer">
-    </target_preparer>
+    <multi_target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer">
+    </multi_target_preparer>
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
         <option name="test-module-name" value="HwBinderBinderizeThroughputSystraceTest" />
         <option name="test-case-path" value="vts/testcases/performance/hwbinder_throughput_test/HwBinderThroughputBenchmark" />
