@@ -28,7 +28,6 @@
         <option name="push" value="DATA/nativetest/mq_benchmark_client/mq_benchmark_client->/data/local/tmp/32/mq_benchmark_client32" />
         <option name="push" value="DATA/nativetest64/mq_benchmark_client/mq_benchmark_client->/data/local/tmp/64/mq_benchmark_client64" />
     </target_preparer>
-    <multi_target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer" />
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
         <option name="test-case-path" value="vts/testcases/performance/fmq_benchmark/FmqPerformanceTest" />
         <option name="test-timeout" value="1m"/>
