@@ -19,7 +19,6 @@
         <option name="cleanup" value="true" />
         <option name="push" value="DATA/performance/res/Loopback.apk->/data/local/tmp/Loopback.apk" />
     </target_preparer>
-    <multi_target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer" />
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
         <option name="test-case-path" value="vts/testcases/performance/audio_loopback_test/AudioLoopbackTest" />
         <option name="test-timeout" value="10m"/>

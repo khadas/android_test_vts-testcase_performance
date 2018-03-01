@@ -25,7 +25,6 @@
         <option name="test-file-name" value="CtsAccelerationTestCases.apk" />
         <option name="cleanup-apks" value="true" />
     </target_preparer>
-    <multi_target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer" />
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
         <option name="test-case-path" value="vts/testcases/performance/hidl_trace_recorder/HidlTraceRecorder" />
     </test>

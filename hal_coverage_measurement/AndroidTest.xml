@@ -19,7 +19,6 @@
         <option name="push-group" value="HalHidlHostTest.push" />
         <option name="cleanup" value="true" />
     </target_preparer>
-    <multi_target_preparer class="com.android.tradefed.targetprep.VtsPythonVirtualenvPreparer" />
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
         <option name="test-case-path" value="vts/testcases/performance/hal_coverage_measurement/VtsHalCoverageMeasurement" />
     </test>
