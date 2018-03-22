@@ -27,6 +27,7 @@
         <option name="cleanup-apks" value="true" />
     </target_preparer>
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
+        <option name="test-module-name" value="HidlTraceRecorder" />
         <option name="test-case-path" value="vts/testcases/performance/hidl_trace_recorder/HidlTraceRecorder" />
     </test>
 </configuration>
