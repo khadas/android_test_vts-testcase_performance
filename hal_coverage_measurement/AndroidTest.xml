@@ -21,6 +21,7 @@
         <option name="cleanup" value="true" />
     </target_preparer>
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
+        <option name="test-module-name" value="VtsHalCoverageMeasurement" />
         <option name="test-case-path" value="vts/testcases/performance/hal_coverage_measurement/VtsHalCoverageMeasurement" />
     </test>
 </configuration>
