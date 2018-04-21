@@ -27,7 +27,7 @@
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
         <option name="test-module-name" value="HwBinderBinderizeLatencyTest" />
         <option name="test-case-path" value="vts/testcases/performance/hwbinder_latency_test/HwBinderLatencyTest" />
-        <option name="test-config-path" value="vts/testcases/performance/hwbinder_latency_test/binderize/HwBinderBinderizeLatencyTest.config" />
+        <option name="test-config-path" value="vts/testcases/performance/hwbinder_latency_test/binderize/HwBinderBinderizeLatencyTest.runner_conf" />
         <option name="test-timeout" value="5m"/>
     </test>
 </configuration>
