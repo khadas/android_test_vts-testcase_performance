@@ -27,7 +27,7 @@
     <test class="com.android.tradefed.testtype.VtsMultiDeviceTest">
         <option name="test-module-name" value="HwBinderPassthroughLatencySystraceTest" />
         <option name="test-case-path" value="vts/testcases/performance/hwbinder_latency_test/HwBinderLatencyTest" />
-        <option name="test-config-path" value="vts/testcases/performance/hwbinder_latency_test/passthrough/HwBinderPassthroughLatencyTest.config" />
+        <option name="test-config-path" value="vts/testcases/performance/hwbinder_latency_test/passthrough/HwBinderPassthroughLatencyTest.runner_conf" />
         <option name="enable-systrace" value="true" />
         <option name="test-timeout" value="5m"/>
     </test>
