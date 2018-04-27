@@ -20,5 +20,4 @@ include $(call all-subdir-makefiles)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := VtsHalCoverageMeasurement
-VTS_CONFIG_SRC_DIR := testcases/performance/hal_coverage_measurement
 -include test/vts/tools/build/Android.host_config.mk
