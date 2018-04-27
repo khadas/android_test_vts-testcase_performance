@@ -19,5 +19,4 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := BinderThroughputBenchmark
-VTS_CONFIG_SRC_DIR := testcases/performance/binder_throughput_test/binder_throughput_benchmark
 include test/vts/tools/build/Android.host_config.mk
