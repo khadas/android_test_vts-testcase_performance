@@ -20,5 +20,4 @@ include $(call all-subdir-makefiles)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := HidlTraceRecorder
-VTS_CONFIG_SRC_DIR := testcases/performance/hidl_trace_recorder
 -include test/vts/tools/build/Android.host_config.mk
